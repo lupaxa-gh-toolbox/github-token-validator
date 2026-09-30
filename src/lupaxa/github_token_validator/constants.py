@@ -4,6 +4,22 @@ from __future__ import annotations
 
 from typing import Final
 
+__all__ = [
+    "API_BASE_URL",
+    "API_VERSION",
+    "DEFAULT_TIMEOUT",
+    "EXIT_FAILURE",
+    "EXIT_INTERRUPTED",
+    "EXIT_SUCCESS",
+    "EXIT_USAGE",
+    "PROGRAM_ALIAS",
+    "PROGRAM_NAME",
+    "PROGRAM_VERSION",
+    "PROGRAM_VERSION_STRING",
+    "PROJECT_NAME",
+    "USER_AGENT",
+]
+
 PROGRAM_NAME: Final[str] = "github-token-validator"
 PROGRAM_ALIAS: Final[str] = "gtv"
 PROJECT_NAME: Final[str] = "lupaxa-github-token-validator"

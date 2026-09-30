@@ -42,7 +42,7 @@ class GitHubClient(Protocol):
 
     def get(self, path: str, *, read_login: bool = False) -> GitHubResponse:
         """Perform one GET and return status data."""
-        ...
+        raise NotImplementedError
 
 
 class RequestsGitHubClient:
