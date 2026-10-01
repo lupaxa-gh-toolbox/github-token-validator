@@ -5,6 +5,8 @@ from __future__ import annotations
 from dataclasses import replace
 from io import StringIO
 
+from colored import set_tty_aware
+import pytest
 from rich.console import Console
 
 from lupaxa.github_token_validator.probes import ProbeRow, RunReport
@@ -72,6 +74,72 @@ def test_render_includes_the_four_tables_and_not_a_body_sentinel() -> None:
     assert "octocat" in text
     assert "not checked" in text
     assert "leaked-repo-path" not in text
+
+
+def test_table_headers_are_capitalised() -> None:
+    text = _render(_report())
+    headers = "\n".join(line for line in text.splitlines() if "┃" in line)
+    for heading in (
+        "Field",
+        "Value",
+        "Scope",
+        "Allows",
+        "Check",
+        "Endpoint",
+        "Result",
+        "Meaning",
+        "Target",
+    ):
+        assert heading in headers
+
+
+def test_tables_use_the_same_width() -> None:
+    text = _render(_report())
+    borders = [
+        line for line in text.splitlines() if line.startswith(("┏", "┌", "╰", "└", "╭"))
+    ]
+    assert len(borders) >= 3
+    assert len({len(line) for line in borders}) == 1
+
+
+def test_first_columns_share_one_width() -> None:
+    text = _render(_report())
+    positions = [
+        position
+        for line in text.splitlines()
+        if (position := _divider_after_first_column(line)) is not None
+    ]
+    assert len(positions) >= 4
+    assert len(set(positions)) == 1
+
+
+def _divider_after_first_column(line: str) -> int | None:
+    bars = [index for index, char in enumerate(line) if char in "┃│"]
+    if len(bars) < 2:
+        return None
+    return bars[1]
+
+
+def test_results_and_titles_are_colored(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("NO_COLOR", raising=False)
+    monkeypatch.delenv("FORCE_COLOR", raising=False)
+    set_tty_aware(False)
+    buffer = StringIO()
+    console = Console(
+        file=buffer,
+        width=100,
+        force_terminal=True,
+        color_system="standard",
+        no_color=False,
+    )
+    try:
+        render_report(_report(), console)
+    finally:
+        set_tty_aware(True)
+    text = buffer.getvalue()
+    colored_rows = [line for line in text.splitlines() if "granted" in line]
+    assert colored_rows
+    assert "\x1b[" in colored_rows[0]
 
 
 def test_markup_in_cells_is_shown_as_text() -> None:
