@@ -23,7 +23,7 @@ __all__ = [
 PROGRAM_NAME: Final[str] = "github-token-validator"
 PROGRAM_ALIAS: Final[str] = "gtv"
 PROJECT_NAME: Final[str] = "lupaxa-github-token-validator"
-PROGRAM_VERSION: Final[str] = "0.0.0"
+PROGRAM_VERSION: Final[str] = "0.1.0-rc1"
 PROGRAM_VERSION_STRING: Final[str] = f"{PROGRAM_NAME} v{PROGRAM_VERSION}"
 
 API_BASE_URL: Final[str] = "https://api.github.com"
